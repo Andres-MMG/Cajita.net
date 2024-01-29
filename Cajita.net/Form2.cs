@@ -11,7 +11,7 @@ namespace Cajita.net
 {
     public partial class Form2 : Form
     {
-        private const int GripSize = 5; // Tamaño de la región de agarre para redimensionar el formulario
+        private const int GripSize = 11; // Tamaño de la región de agarre para redimensionar el formulario
 
         private Point _mouseOffset;
         private bool _isResizing = false;
@@ -153,6 +153,10 @@ namespace Cajita.net
                 UpdateCursor(e.Location);
             }
         }
+
+
+
+
         private void ResizeForm(MouseEventArgs e)
         {
             int width = this.Width;

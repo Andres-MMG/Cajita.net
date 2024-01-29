@@ -45,9 +45,10 @@
             TabControl1.ContextMenuStrip = cntxtMenuStrip;
             TabControl1.Dock = DockStyle.Fill;
             TabControl1.Location = new Point(0, 0);
+            TabControl1.Margin = new Padding(10);
             TabControl1.Name = "TabControl1";
             TabControl1.SelectedIndex = 0;
-            TabControl1.Size = new Size(800, 450);
+            TabControl1.Size = new Size(402, 214);
             TabControl1.TabIndex = 0;
             // 
             // cntxtMenuStrip
@@ -90,7 +91,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.White;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(402, 214);
             ContextMenuStrip = cntxtMenuStrip;
             Controls.Add(TabControl1);
             ForeColor = Color.Black;
