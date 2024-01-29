@@ -41,32 +41,7 @@ namespace Cajita.net
             TabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
         }
 
-        private void InitializeRichTextBoxes()
-        {
-            ContextMenuStrip richTextBoxContextMenu = CreateContextMenu();
 
-            foreach (TabPage tab in TabControl1.TabPages)
-            {
-                foreach (Control control in tab.Controls)
-                {
-                    if (control is RichTextBox richTextBox)
-                    {
-                        // Desuscribir los eventos para evitar duplicados
-                        richTextBox.MouseDown -= RichTextBox_MouseDown;
-                        richTextBox.MouseMove -= RichTextBox_MouseMove;
-                        richTextBox.MouseUp -= RichTextBox_MouseUp;
-
-                        // Asignar el menú contextual al RichTextBox
-                        richTextBox.ContextMenuStrip = richTextBoxContextMenu;
-
-                        // Suscribir los eventos
-                        richTextBox.MouseDown += RichTextBox_MouseDown;
-                        richTextBox.MouseMove += RichTextBox_MouseMove;
-                        richTextBox.MouseUp += RichTextBox_MouseUp;
-                    }
-                }
-            }
-        }
 
 
         private void TabControl1_SelectedIndexChanged(object sender, EventArgs e)
@@ -297,16 +272,25 @@ namespace Cajita.net
             RichTextBox richTextBox = sender as RichTextBox;
             if (richTextBox != null)
             {
-                // Aquí tu lógica cuando el RichTextBox pierde el foco
-                // Por ejemplo, guardar el contenido del RichTextBox
                 SaveContent(richTextBox);
             }
         }
 
         private void SaveContent(RichTextBox richTextBox)
         {
-            // Tu lógica para guardar el contenido del RichTextBox
+            // Verificar si el RichTextBox tiene una asociación con un archivo
+            if (richTextBox.Tag is RichTextBoxFileInfo richTextBoxFileInfo && !string.IsNullOrEmpty(richTextBoxFileInfo.FilePath))
+            {
+                // Guardar el contenido del RichTextBox en el archivo
+                File.WriteAllText(richTextBoxFileInfo.FilePath, richTextBox.Text);
+            }
+            else
+            {
+                // Manejar casos donde no hay un archivo asociado o donde no se debe guardar
+                // Por ejemplo, mostrar un mensaje al usuario o abrir un diálogo de "Guardar como..."
+            }
         }
+
 
         private void RichTextBox_MouseDown(object sender, MouseEventArgs e)
         {
@@ -357,7 +341,12 @@ namespace Cajita.net
         }
 
 
-        private void btnAddTabPage_Click(object sender, EventArgs e)
+        private void AddTabPage_dblClick(object sender, EventArgs e)
+        {
+            AddTabPage();
+        }
+
+        private void AddTabPage()
         {
             string newFilePath = GenerateNewFilePath();
             CreateTabWithFile(newFilePath);
@@ -457,7 +446,7 @@ namespace Cajita.net
 
         }
 
-       private void Form2_Load(object sender, EventArgs e)
+        private void Form2_Load(object sender, EventArgs e)
         {
             string configPath = GetConfigFilePath();
             if (File.Exists(configPath))
@@ -469,25 +458,29 @@ namespace Cajita.net
                     CreateTabWithFile(filePath);
                 }
             }
+            else
+            {
+                //no existe ninguno se crea uno nuevo por defecto
+                AddTabPage();
+            }
         }
 
         private void Form2_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var filePaths = TabControl1.TabPages
-                .Cast<TabPage>()
-                .Select(tp => tp.Tag as RichTextBoxFileInfo)
-                .Where(rtfi => rtfi != null)
-                .Select(rtfi => rtfi.FilePath)
-                .ToList();
+            var filePaths = new List<string>();
+            foreach (TabPage tabPage in TabControl1.TabPages)
+            {
+                if (tabPage.Tag is RichTextBoxFileInfo rtfi)
+                {
+                    // Guardar el contenido del RichTextBox en el archivo asociado
+                    File.WriteAllText(rtfi.FilePath, rtfi.RichTextBox.Text);
+                    filePaths.Add(rtfi.FilePath);
+                }
+            }
 
+            // Guardar la lista de rutas de archivos en el archivo de configuración
             string json = JsonConvert.SerializeObject(filePaths, Formatting.Indented);
             File.WriteAllText(GetConfigFilePath(), json);
-        }
-
-        private void SaveFileFromRichTextBox(RichTextBox richTextBox, string filePath)
-        {
-            // Guardar el contenido del RichTextBox en el archivo
-            File.WriteAllText(filePath, richTextBox.Text);
         }
 
     }

@@ -37,7 +37,6 @@
             separadorToolStripMenuItem = new ToolStripSeparator();
             salirToolStripMenuItem = new ToolStripMenuItem();
             timer1 = new System.Windows.Forms.Timer(components);
-            btnAddTabPage = new Button();
             cntxtMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -86,30 +85,21 @@
             salirToolStripMenuItem.Size = new Size(109, 22);
             salirToolStripMenuItem.Text = "Salir";
             // 
-            // btnAddTabPage
-            // 
-            btnAddTabPage.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            btnAddTabPage.Location = new Point(772, 0);
-            btnAddTabPage.Name = "btnAddTabPage";
-            btnAddTabPage.Size = new Size(25, 25);
-            btnAddTabPage.TabIndex = 1;
-            btnAddTabPage.Text = "+";
-            btnAddTabPage.UseVisualStyleBackColor = true;
-            btnAddTabPage.Click += btnAddTabPage_Click;
-            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
+            BackColor = Color.White;
             ClientSize = new Size(800, 450);
             ContextMenuStrip = cntxtMenuStrip;
-            Controls.Add(btnAddTabPage);
             Controls.Add(TabControl1);
+            ForeColor = Color.Black;
             Name = "Form2";
             Text = "Form2";
             TopMost = true;
             FormClosing += Form2_FormClosing;
             Load += Form2_Load;
+            DoubleClick += AddTabPage_dblClick;
             cntxtMenuStrip.ResumeLayout(false);
             ResumeLayout(false);
         }
@@ -124,6 +114,5 @@
         private ToolStripMenuItem moverToolStripMenuItem;
         private ToolStripSeparator separadorToolStripMenuItem;
         private ToolStripMenuItem salirToolStripMenuItem;
-        private Button btnAddTabPage;
     }
 }
