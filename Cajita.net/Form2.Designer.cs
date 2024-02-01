@@ -37,6 +37,7 @@
             separadorToolStripMenuItem = new ToolStripSeparator();
             salirToolStripMenuItem = new ToolStripMenuItem();
             timer1 = new System.Windows.Forms.Timer(components);
+            cerrarToolStripMenuItem = new ToolStripMenuItem();
             cntxtMenuStrip.SuspendLayout();
             SuspendLayout();
             // 
@@ -50,41 +51,50 @@
             TabControl1.SelectedIndex = 0;
             TabControl1.Size = new Size(402, 214);
             TabControl1.TabIndex = 0;
+            TabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
+            TabControl1.MouseClick += TabControl1_MouseClick;
+            TabControl1.MouseDown += TabControl1_MouseDown;
             // 
             // cntxtMenuStrip
             // 
-            cntxtMenuStrip.Items.AddRange(new ToolStripItem[] { copiarToolStripMenuItem, pegarToolStripMenuItem, moverToolStripMenuItem, separadorToolStripMenuItem, salirToolStripMenuItem });
+            cntxtMenuStrip.Items.AddRange(new ToolStripItem[] { cerrarToolStripMenuItem, copiarToolStripMenuItem, pegarToolStripMenuItem, moverToolStripMenuItem, separadorToolStripMenuItem, salirToolStripMenuItem });
             cntxtMenuStrip.Name = "cntxtMenuStrip";
-            cntxtMenuStrip.Size = new Size(110, 98);
+            cntxtMenuStrip.Size = new Size(181, 142);
             // 
             // copiarToolStripMenuItem
             // 
             copiarToolStripMenuItem.Name = "copiarToolStripMenuItem";
-            copiarToolStripMenuItem.Size = new Size(109, 22);
+            copiarToolStripMenuItem.Size = new Size(180, 22);
             copiarToolStripMenuItem.Text = "Copiar";
             // 
             // pegarToolStripMenuItem
             // 
             pegarToolStripMenuItem.Name = "pegarToolStripMenuItem";
-            pegarToolStripMenuItem.Size = new Size(109, 22);
+            pegarToolStripMenuItem.Size = new Size(180, 22);
             pegarToolStripMenuItem.Text = "Pegar";
             // 
             // moverToolStripMenuItem
             // 
             moverToolStripMenuItem.Name = "moverToolStripMenuItem";
-            moverToolStripMenuItem.Size = new Size(109, 22);
+            moverToolStripMenuItem.Size = new Size(180, 22);
             moverToolStripMenuItem.Text = "Mover";
             // 
             // separadorToolStripMenuItem
             // 
             separadorToolStripMenuItem.Name = "separadorToolStripMenuItem";
-            separadorToolStripMenuItem.Size = new Size(106, 6);
+            separadorToolStripMenuItem.Size = new Size(177, 6);
             // 
             // salirToolStripMenuItem
             // 
             salirToolStripMenuItem.Name = "salirToolStripMenuItem";
-            salirToolStripMenuItem.Size = new Size(109, 22);
+            salirToolStripMenuItem.Size = new Size(180, 22);
             salirToolStripMenuItem.Text = "Salir";
+            // 
+            // cerrarToolStripMenuItem
+            // 
+            cerrarToolStripMenuItem.Name = "cerrarToolStripMenuItem";
+            cerrarToolStripMenuItem.Size = new Size(180, 22);
+            cerrarToolStripMenuItem.Text = "Cerrar Tab";
             // 
             // Form2
             // 
@@ -115,5 +125,6 @@
         private ToolStripMenuItem moverToolStripMenuItem;
         private ToolStripSeparator separadorToolStripMenuItem;
         private ToolStripMenuItem salirToolStripMenuItem;
+        private ToolStripMenuItem cerrarToolStripMenuItem;
     }
 }

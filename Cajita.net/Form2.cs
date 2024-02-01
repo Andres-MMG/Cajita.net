@@ -16,6 +16,7 @@ namespace Cajita.net
         private Point _mouseOffset;
         private bool _isResizing = false;
         private Point _lastMousePosition;
+        private TabPage tabUnderCursor;
 
         // Propiedad que obtiene el RichTextBox actual del tab seleccionado
         private RichTextBox CurrentRichTextBox =>
@@ -37,8 +38,6 @@ namespace Cajita.net
             // Configuración e inicio del timer
             InitializeTimer();
 
-            // Suscribir al evento de cambio de tab
-            TabControl1.SelectedIndexChanged += TabControl1_SelectedIndexChanged;
         }
 
 
@@ -61,6 +60,7 @@ namespace Cajita.net
         // Asignación de eventos a los elementos del menú
         private void AssignMenuEvents()
         {
+            cerrarToolStripMenuItem.Click += (sender, e) => CerrarTabItem_Click();
             copiarToolStripMenuItem.Click += (sender, e) => CopyText();
             pegarToolStripMenuItem.Click += (sender, e) => PasteText();
             moverToolStripMenuItem.Click += (sender, e) => ToggleMove();
@@ -329,21 +329,29 @@ namespace Cajita.net
         }
 
 
-        private ContextMenuStrip CreateContextMenu()
+
+        private void ContextMenu_Opening(object sender, CancelEventArgs e)
         {
-            // Crear el ContextMenuStrip y sus ítems
-            ContextMenuStrip contextMenu = new ContextMenuStrip();
-            ToolStripMenuItem copiarItem = new ToolStripMenuItem("Copiar");
-            copiarItem.Click += (sender, e) => CopyText();
-            ToolStripMenuItem pegarItem = new ToolStripMenuItem("Pegar");
-            pegarItem.Click += (sender, e) => PasteText();
+            ContextMenuStrip menu = sender as ContextMenuStrip;
+            if (menu != null)
+            {
+                Point p = menu.PointToClient(Control.MousePosition);
+                // Ajustar p para que el punto esté relativo al TabControl
+                p = TabControl1.PointToScreen(p);
 
-            // Añadir los ítems al ContextMenuStrip
-            contextMenu.Items.AddRange(new ToolStripItem[] { copiarItem, pegarItem });
-
-            return contextMenu;
+                // Determinar sobre qué pestaña se hizo clic derecho
+                for (int i = 0; i < TabControl1.TabCount; i++)
+                {
+                    Rectangle r = TabControl1.GetTabRect(i);
+                    if (r.Contains(p))
+                    {
+                        // Establecer la pestaña sobre la que se hizo clic derecho
+                        TabControl1.SelectedTab = TabControl1.TabPages[i];
+                        break;
+                    }
+                }
+            }
         }
-
 
         private void AddTabPage_dblClick(object sender, EventArgs e)
         {
@@ -394,8 +402,7 @@ namespace Cajita.net
             {
                 Dock = DockStyle.Fill,
                 Location = new Point(3, 3),
-                Size = new Size(786, 416),
-                ContextMenuStrip = CreateContextMenu(),
+                Size = new Size(786, 416)
             };
 
             // Si el archivo no existe, crea un archivo nuevo
@@ -486,6 +493,59 @@ namespace Cajita.net
             string json = JsonConvert.SerializeObject(filePaths, Formatting.Indented);
             File.WriteAllText(GetConfigFilePath(), json);
         }
+        private void TabControl1_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                for (int i = 0; i < TabControl1.TabCount; i++)
+                {
+                    Rectangle r = TabControl1.GetTabRect(i);
+                    if (r.Contains(e.Location))
+                    {
+                        // Guardar la pestaña bajo el cursor y mostrar el menú contextual
+                        tabUnderCursor = TabControl1.TabPages[i];
+                        ContextMenuStrip.Show(TabControl1, e.Location);
+                        return; // Salir después de encontrar la pestaña correcta
+                    }
+                }
+            }
+        }
+
+
+        private void TabControl1_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                for (int i = 0; i < TabControl1.TabCount; i++)
+                {
+                    Rectangle r = TabControl1.GetTabRect(i);
+                    if (r.Contains(e.Location))
+                    {
+                        // Guardar la pestaña bajo el cursor
+                        tabUnderCursor = TabControl1.TabPages[i];
+                        break;
+                    }
+                }
+            }
+        }
+
+        private void CerrarTabItem_Click()
+        {
+            if (tabUnderCursor != null)
+            {
+                timer1.Stop(); // Detener el temporizador para que no se active el evento Tick
+                DialogResult result = MessageBox.Show("¿Estás seguro de que quieres cerrar esta pestaña?", "Confirmar cierre", MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    // Cerrar la pestaña que está bajo el cursor
+                    TabControl1.TabPages.Remove(tabUnderCursor);
+                    tabUnderCursor.Dispose();
+                    tabUnderCursor = null; // Resetear la referencia
+                }
+                timer1.Start(); // Reiniciar el temporizador
+            }
+        }
+
 
     }
 }
